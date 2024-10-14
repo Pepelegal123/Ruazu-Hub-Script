@@ -34,25 +34,62 @@ local function createButton(name, position)
     return button
 end
 
+-- Teleport Function
+local function teleportTo(target)
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.CFrame
+end
+
+-- Auto Farm Function
+local function autoFarm()
+    spawn(function()
+        while wait(0.1) do  -- Fast auto farm
+            for _, npc in pairs(game.Workspace.NPCs:GetChildren()) do
+                if npc:FindFirstChild("Humanoid") then
+                    teleportTo(npc.HumanoidRootPart)
+                    -- Attack logic
+                    print("Farming " .. npc.Name)
+                end
+            end
+        end
+    end)
+end
+
+-- Auto Item Function
+local function autoItem()
+    spawn(function()
+        while wait(0.1) do
+            for _, item in pairs(game.Workspace.Items:GetChildren()) do
+                teleportTo(item)
+                -- Item pickup logic
+                print("Picking up " .. item.Name)
+            end
+        end
+    end)
+end
+
+-- Auto Bounty Function
+local function autoBounty()
+    spawn(function()
+        while wait(0.1) do
+            for _, player in pairs(game.Players:GetPlayers()) do
+                if player ~= game.Players.LocalPlayer then
+                    teleportTo(player.Character.HumanoidRootPart)
+                    -- Attack logic
+                    print("Hunting " .. player.Name)
+                end
+            end
+        end
+    end)
+end
+
 -- Create Auto Farm Button
 local autoFarmButton = createButton("Auto Farm", UDim2.new(0.1, 0, 0.3, 0))
-autoFarmButton.MouseButton1Click:Connect(function()
-    while wait(0.1) do  -- Fast auto farm
-        -- Auto farm script here
-        print("Auto farming...")
-    end
-end)
+autoFarmButton.MouseButton1Click:Connect(autoFarm)
 
 -- Create Auto Item Button
 local autoItemButton = createButton("Auto Item", UDim2.new(0.1, 0, 0.5, 0))
-autoItemButton.MouseButton1Click:Connect(function()
-    -- Auto item script here
-    print("Auto collecting items...")
-end)
+autoItemButton.MouseButton1Click:Connect(autoItem)
 
 -- Create Auto Bounty Button
 local autoBountyButton = createButton("Auto Bounty", UDim2.new(0.1, 0, 0.7, 0))
-autoBountyButton.MouseButton1Click:Connect(function()
-    -- Auto bounty script here
-    print("Auto bounty hunting...")
-end)
+autoBountyButton.MouseButton1Click:Connect(autoBounty)
