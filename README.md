@@ -34,50 +34,73 @@ local function createButton(name, position)
     return button
 end
 
--- Teleport Function
-local function teleportTo(target)
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.CFrame
+-- Function to stop farming, collecting or hunting
+local function stopActions()
+    autoFarming = false
+    autoCollecting = false
+    autoHunting = false
 end
 
 -- Auto Farm Function
+local autoFarming = false
 local function autoFarm()
+    if autoFarming then
+        autoFarming = false
+        return
+    end
+    autoFarming = true
     spawn(function()
-        while wait(0.1) do  -- Fast auto farm
+        while autoFarming do
             for _, npc in pairs(game.Workspace.NPCs:GetChildren()) do
-                if npc:FindFirstChild("Humanoid") then
-                    teleportTo(npc.HumanoidRootPart)
+                if npc:FindFirstChild("Humanoid") and autoFarming then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = npc.HumanoidRootPart.CFrame
                     -- Attack logic
                     print("Farming " .. npc.Name)
                 end
             end
+            wait(0.1)
         end
     end)
 end
 
 -- Auto Item Function
+local autoCollecting = false
 local function autoItem()
+    if autoCollecting then
+        autoCollecting = false
+        return
+    end
+    autoCollecting = true
     spawn(function()
-        while wait(0.1) do
+        while autoCollecting do
             for _, item in pairs(game.Workspace.Items:GetChildren()) do
-                teleportTo(item)
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = item.CFrame
                 -- Item pickup logic
                 print("Picking up " .. item.Name)
             end
+            wait(0.1)
         end
     end)
 end
 
 -- Auto Bounty Function
+local autoHunting = false
 local function autoBounty()
+    if autoHunting then
+        autoHunting = false
+        return
+    end
+    autoHunting = true
     spawn(function()
-        while wait(0.1) do
+        while autoHunting do
             for _, player in pairs(game.Players:GetPlayers()) do
-                if player ~= game.Players.LocalPlayer then
-                    teleportTo(player.Character.HumanoidRootPart)
+                if player ~= game.Players.LocalPlayer and autoHunting then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame
                     -- Attack logic
                     print("Hunting " .. player.Name)
                 end
             end
+            wait(0.1)
         end
     end)
 end
@@ -85,11 +108,14 @@ end
 -- Create Auto Farm Button
 local autoFarmButton = createButton("Auto Farm", UDim2.new(0.1, 0, 0.3, 0))
 autoFarmButton.MouseButton1Click:Connect(autoFarm)
+autoFarmButton.MouseButton2Click:Connect(stopActions) -- Stop on right click
 
 -- Create Auto Item Button
 local autoItemButton = createButton("Auto Item", UDim2.new(0.1, 0, 0.5, 0))
 autoItemButton.MouseButton1Click:Connect(autoItem)
+autoItemButton.MouseButton2Click:Connect(stopActions) -- Stop on right click
 
 -- Create Auto Bounty Button
 local autoBountyButton = createButton("Auto Bounty", UDim2.new(0.1, 0, 0.7, 0))
 autoBountyButton.MouseButton1Click:Connect(autoBounty)
+autoBountyButton.MouseButton2Click:Connect(stopActions) -- Stop on right click
